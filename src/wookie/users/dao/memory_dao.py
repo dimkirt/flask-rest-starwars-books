@@ -1,4 +1,4 @@
-class UsersDAO(object):
+class UsersMemoryDAO(object):
     """"""
     def __init__(self, db):
         """

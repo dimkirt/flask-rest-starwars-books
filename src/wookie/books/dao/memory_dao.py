@@ -1,5 +1,7 @@
-class BooksDAO(object):
-    """"""
+class BooksMemoryDAO(object):
+    """
+    Implements the in Memory data access object for the Books
+    """
     def __init__(self, db):
         """
         Set the db reference

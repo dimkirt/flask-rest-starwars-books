@@ -4,10 +4,11 @@ from flask_restful import Api
 import flask_jwt_extended
 
 from . import utils
+from .books.dao.memory_dao import BooksMemoryDAO
+from .users.dao.memory_dao import UsersMemoryDAO
+
 from .books import resources as book_resources
-from .books.dao import BooksDAO
 from .users import resources as user_resources
-from .users.dao import UsersDAO
 
 
 def create_app():
@@ -19,6 +20,7 @@ def create_app():
     flask_jwt_extended.JWTManager(app)
 
     app_logger = utils.create_logger(__name__)
+
     # Use in-memory storage for now
     db = {
         'books': [{
@@ -39,8 +41,10 @@ def create_app():
         }]
     }
 
+    books_dao = BooksMemoryDAO(db)
+    users_dao = UsersMemoryDAO(db)
+
     # public Book resources
-    books_dao = BooksDAO(db)
     api.add_resource(book_resources.PublicBookList,
                      '/books',
                      resource_class_kwargs={
@@ -71,7 +75,6 @@ def create_app():
                      })
 
     # Authentication resource
-    users_dao = UsersDAO(db)
     api.add_resource(user_resources.UserAuthentication,
                      '/auth',
                      resource_class_kwargs={
