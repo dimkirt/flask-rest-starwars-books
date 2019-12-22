@@ -89,7 +89,6 @@ class UserBookList(BaseResource):
         Publish a new book
         """
         book_data = request.get_json()
-        print(book_data['title'])
         current_userid = get_jwt_identity()
         book_data['publisher'] = current_userid
 
