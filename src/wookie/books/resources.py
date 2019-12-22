@@ -20,7 +20,7 @@ get_book_dto = {
 }
 
 
-class Books(BaseResource):
+class PublicBookList(BaseResource):
     """
     Resource for all the books
     """
@@ -47,7 +47,7 @@ class Books(BaseResource):
         return books, 200
 
 
-class Book(BaseResource):
+class PublicBook(BaseResource):
     """
     Resource for one book
     """

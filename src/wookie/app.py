@@ -26,14 +26,14 @@ def create_app():
     }
 
     books_dao = BooksDAO(db)
-    api.add_resource(book_resources.Books,
+    api.add_resource(book_resources.PublicBookList,
                      '/books',
                      resource_class_kwargs={
                          'logger': app_logger,
                          'books_dao': books_dao
                      })
 
-    api.add_resource(book_resources.Book,
+    api.add_resource(book_resources.PublicBook,
                      '/books/<string:book_id>',
                      resource_class_kwargs={
                          'logger': app_logger,
