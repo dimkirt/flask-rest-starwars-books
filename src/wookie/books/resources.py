@@ -4,6 +4,7 @@ from flask_restful import Resource
 class BaseResource(Resource):
     def __init__(self, **kwargs):
         self.logger = kwargs['logger']
+        self.dao = kwargs['dao']
 
 
 class Books(BaseResource):
@@ -15,5 +16,5 @@ class Books(BaseResource):
         Return a JSON array of all books
         """
         self.logger.info('GET /books')
-        books = [{'title': 'Paok'}]
+        books = self.dao.get_all_books()
         return {'count': len(books), 'items': books}, 200
