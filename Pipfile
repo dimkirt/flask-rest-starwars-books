@@ -16,6 +16,7 @@ flask-restful = "*"
 gunicorn = "*"
 wookie = {editable = true,path = "."}
 flask-jwt-extended = "*"
+flask-sqlalchemy = "*"
 
 [requires]
 python_version = "3.7"
