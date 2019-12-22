@@ -29,7 +29,7 @@ def create_app():
             'price': 100,
             'cover':
             'https://upload.wikimedia.org/wikipedia/en/thumb/7/7d/Lenna_%28test_image%29.png/220px-Lenna_%28test_image%29.png',  # noqa
-            'publisher': 0,  # id of the publisher
+            'publisher': 666,  # id of the publisher
         }],
         'users': [{
             'id': 0,
@@ -50,6 +50,21 @@ def create_app():
 
     api.add_resource(book_resources.PublicBook,
                      '/books/<string:book_id>',
+                     resource_class_kwargs={
+                         'logger': app_logger,
+                         'books_dao': books_dao
+                     })
+
+    # Books resources owned by Users
+    api.add_resource(book_resources.UserBookList,
+                     '/users/books',
+                     resource_class_kwargs={
+                         'logger': app_logger,
+                         'books_dao': books_dao
+                     })
+
+    api.add_resource(book_resources.UserBook,
+                     '/users/books/<string:book_id>',
                      resource_class_kwargs={
                          'logger': app_logger,
                          'books_dao': books_dao

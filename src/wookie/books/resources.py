@@ -1,4 +1,5 @@
 from flask_restful import Resource, fields, marshal_with, request, abort
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 
 class BaseResource(Resource):
@@ -60,3 +61,60 @@ class PublicBook(BaseResource):
         book = self.books_dao.find_book_by_id(book_id)
         book['host'] = request.host_url
         return book, 200
+
+
+class UserBookList(BaseResource):
+    """
+    BookList Resource that is owned by a User
+    """
+    @jwt_required
+    @marshal_with(get_book_dto, envelope='data')
+    def get(self):
+        """
+        Get all books published by a User
+        """
+        current_userid = get_jwt_identity()
+        books = self.books_dao.find_books_by_publisher(current_userid)
+
+        for book in books:
+            book['host'] = request.host_url
+
+        self.logger.info('GET /users/books')
+        return books, 200
+
+    @jwt_required
+    @marshal_with(get_book_dto, envelope='data')
+    def post(self):
+        """
+        Publish a new book
+        """
+        book_data = request.get_json()
+        print(book_data['title'])
+        current_userid = get_jwt_identity()
+        book_data['publisher'] = current_userid
+
+        published_book = self.books_dao.create_book(book_data)
+        published_book['host'] = request.host_url
+
+        self.logger.info('POST /users/books')
+        return published_book, 201
+
+
+class UserBook(BaseResource):
+    """
+    Book Resource that is owned by a User
+    """
+    @jwt_required
+    def delete(self, book_id):
+        """
+        Allows a User to unpublish a book
+        """
+        current_userid = get_jwt_identity()
+        book = self.books_dao.find_book_by_id(book_id)
+        if book['publisher'] != current_userid:
+            abort(403)
+
+        self.books_dao.delete_book_by_id(book_id)
+        self.logger.info('DELETE /users/books/${}'.format(book_id))
+
+        return '', 204

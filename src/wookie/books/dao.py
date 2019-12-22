@@ -6,6 +6,12 @@ class BooksDAO(object):
         """
         self._db = db
 
+    def create_book(self, book_data):
+        """"""
+        book_data['id'] = len(self._db['books'])
+        self._db['books'].append(book_data)
+        return self._db['books'][-1]
+
     def get_all_books(self):
         """
         Returns all books from the database
@@ -25,4 +31,18 @@ class BooksDAO(object):
         for book in self._db['books']:
             if book['title'] == book_title:
                 return book
+        return None
+
+    def find_books_by_publisher(self, publisher_id):
+        books = []
+        for book in self._db['books']:
+            if book['publisher'] == publisher_id:
+                books.append(book)
+        return books
+
+    def delete_book_by_id(self, book_id):
+        """
+        Delete a book by id
+        """
+        del self._db['books'][int(book_id)]
         return None
