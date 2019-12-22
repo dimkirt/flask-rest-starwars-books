@@ -6,7 +6,7 @@ import flask_jwt_extended
 from . import utils
 from .books import resources as book_resources
 from .books.dao import BooksDAO
-from .auth import resources as auth_resources
+from .users import resources as user_resources
 from .users.dao import UsersDAO
 
 
@@ -72,7 +72,7 @@ def create_app():
 
     # Authentication resource
     users_dao = UsersDAO(db)
-    api.add_resource(auth_resources.Authentication,
+    api.add_resource(user_resources.UserAuthentication,
                      '/auth',
                      resource_class_kwargs={
                          'logger': app_logger,

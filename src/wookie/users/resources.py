@@ -11,7 +11,7 @@ class BaseResource(Resource):
 auth_dto = {'access_token': fields.String}
 
 
-class Authentication(BaseResource):
+class UserAuthentication(BaseResource):
     """
     Resource for authenticating a User
     """
