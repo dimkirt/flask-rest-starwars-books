@@ -1,4 +1,7 @@
-class UsersMemoryDAO(object):
+from . import abstract_dao
+
+
+class UsersMemoryDAO(abstract_dao.AbstractUsersDAO):
     """"""
     def __init__(self, db):
         """

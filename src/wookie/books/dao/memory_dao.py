@@ -1,4 +1,7 @@
-class BooksMemoryDAO(object):
+from . import abstract_dao
+
+
+class BooksMemoryDAO(abstract_dao.AbstractBooksDAO):
     """
     Implements the in Memory data access object for the Books
     """
