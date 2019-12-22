@@ -1,6 +1,8 @@
 from flask import Flask
 from flask_restful import Api
 
+import flask_jwt_extended
+
 from . import utils
 from .books import resources as book_resources
 from .books.dao import BooksDAO
@@ -8,7 +10,11 @@ from .books.dao import BooksDAO
 
 def create_app():
     app = Flask(__name__)
+    app.config['PROPAGATE_EXCEPTIONS'] = True
+    app.config['JWT_SECRET_KEY'] = 'super-secret'  # TODO: Move this to env var
+
     api = Api(app)
+    flask_jwt_extended.JWTManager(app)
 
     app_logger = utils.create_logger(__name__)
     # Use in-memory storage for now
