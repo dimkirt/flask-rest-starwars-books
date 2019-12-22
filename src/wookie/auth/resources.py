@@ -28,5 +28,5 @@ class Authentication(BaseResource):
                                               auth_data['password'])
         if not user:
             abort(403)
-        access_token = create_access_token(identity=user['username'])
+        access_token = create_access_token(identity=user['id'])
         return {'access_token': access_token}, 200
