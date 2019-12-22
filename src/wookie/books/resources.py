@@ -1,5 +1,4 @@
-from flask_restful import Resource, fields, marshal_with
-from flask import request
+from flask_restful import Resource, fields, marshal_with, request, abort
 
 
 class BaseResource(Resource):
@@ -30,6 +29,16 @@ class Books(BaseResource):
         """
         Return a JSON array of all books
         """
+        # Search by title
+        args = request.args
+        if 'title' in args:
+            self.logger.info('GET /books?title={}'.format(args['title']))
+            book = self.dao.find_book_by_title(args['title'])
+            if book is None:
+                abort(403)
+            book['host'] = request.host_url
+            return book, 200
+
         self.logger.info('GET /books')
         books = self.dao.get_all_books()
         for book in books:
@@ -48,7 +57,6 @@ class Book(BaseResource):
         Get a book by id
         """
         self.logger.info('GET /books/${}'.format(book_id))
-        print(request)
         book = self.dao.find_book_by_id(book_id)
         book['host'] = request.host_url
         return book, 200

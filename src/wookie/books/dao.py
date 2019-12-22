@@ -17,3 +17,12 @@ class BooksDAO(object):
         Get a book by id
         """
         return self._db['books'][int(book_id)]
+
+    def find_book_by_title(self, book_title):
+        """
+        Get a book by id
+        """
+        for book in self._db['books']:
+            if book['title'] == book_title:
+                return book
+        return None
