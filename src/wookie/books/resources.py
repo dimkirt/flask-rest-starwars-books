@@ -4,7 +4,7 @@ from flask_restful import Resource, fields, marshal_with, request, abort
 class BaseResource(Resource):
     def __init__(self, **kwargs):
         self.logger = kwargs['logger']
-        self.dao = kwargs['dao']
+        self.books_dao = kwargs['books_dao']
 
 
 get_book_dto = {
@@ -33,14 +33,14 @@ class Books(BaseResource):
         args = request.args
         if 'title' in args:
             self.logger.info('GET /books?title={}'.format(args['title']))
-            book = self.dao.find_book_by_title(args['title'])
+            book = self.books_dao.find_book_by_title(args['title'])
             if book is None:
                 abort(403)
             book['host'] = request.host_url
             return book, 200
 
         self.logger.info('GET /books')
-        books = self.dao.get_all_books()
+        books = self.books_dao.get_all_books()
         for book in books:
             book['host'] = request.host_url
 
@@ -57,6 +57,6 @@ class Book(BaseResource):
         Get a book by id
         """
         self.logger.info('GET /books/${}'.format(book_id))
-        book = self.dao.find_book_by_id(book_id)
+        book = self.books_dao.find_book_by_id(book_id)
         book['host'] = request.host_url
         return book, 200

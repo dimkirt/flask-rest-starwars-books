@@ -3,7 +3,7 @@ from flask_restful import Api
 
 from . import utils
 from .books import resources as book_resources
-from .books import BooksDAO
+from .books.dao import BooksDAO
 
 
 def create_app():
@@ -30,14 +30,14 @@ def create_app():
                      '/books',
                      resource_class_kwargs={
                          'logger': app_logger,
-                         'dao': books_dao
+                         'books_dao': books_dao
                      })
 
     api.add_resource(book_resources.Book,
                      '/books/<string:book_id>',
                      resource_class_kwargs={
                          'logger': app_logger,
-                         'dao': books_dao
+                         'books_dao': books_dao
                      })
 
     return app
