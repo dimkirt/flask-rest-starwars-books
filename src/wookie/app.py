@@ -2,8 +2,8 @@ from flask import Flask
 from flask_restful import Api
 
 from . import utils
-from .books import resources
-from .books.dao import BooksDAO
+from .books import resources as book_resources
+from .books import BooksDAO
 
 
 def create_app():
@@ -26,14 +26,14 @@ def create_app():
     }
 
     books_dao = BooksDAO(db)
-    api.add_resource(resources.Books,
+    api.add_resource(book_resources.Books,
                      '/books',
                      resource_class_kwargs={
                          'logger': app_logger,
                          'dao': books_dao
                      })
 
-    api.add_resource(resources.Book,
+    api.add_resource(book_resources.Book,
                      '/books/<string:book_id>',
                      resource_class_kwargs={
                          'logger': app_logger,
