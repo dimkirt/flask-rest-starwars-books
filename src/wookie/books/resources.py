@@ -7,7 +7,7 @@ class BaseResource(Resource):
         self.dao = kwargs['dao']
 
 
-getBookDto = {
+get_book_dto = {
     'id': fields.String,
     'title': fields.String,
     'author': fields.String,
@@ -24,7 +24,7 @@ class Books(BaseResource):
     """
     Resource for all the books
     """
-    @marshal_with(getBookDto, envelope='data')
+    @marshal_with(get_book_dto, envelope='data')
     def get(self):
         """
         Return a JSON array of all books
@@ -51,7 +51,7 @@ class Book(BaseResource):
     """
     Resource for one book
     """
-    @marshal_with(getBookDto, envelope='data')
+    @marshal_with(get_book_dto, envelope='data')
     def get(self, book_id):
         """
         Get a book by id
