@@ -10,6 +10,7 @@ flake8 = "*"
 [packages]
 Flask = "==1.1.1"
 SQLAlchemy = "==1.3.8"
+flask-restplus = "*"
 
 [requires]
 python_version = "3.7"
