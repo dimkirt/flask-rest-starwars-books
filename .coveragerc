@@ -1,0 +1,10 @@
+[run]
+branch = True
+
+source =
+    src
+
+omit =
+  */__init__.py
+  tests/*
+  */wsgi.py
