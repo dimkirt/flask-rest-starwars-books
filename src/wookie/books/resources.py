@@ -59,6 +59,8 @@ class PublicBook(BaseResource):
         """
         self.logger.info('GET /books/${}'.format(book_id))
         book = self.books_dao.find_book_by_id(book_id)
+        if book is None:
+            abort(403)
         book['host'] = request.host_url
         return book, 200
 
