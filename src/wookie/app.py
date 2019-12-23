@@ -4,8 +4,6 @@ from flask_restful import Api
 import flask_jwt_extended
 
 from . import utils
-from .books.dao.memory_dao import BooksMemoryDAO
-from .users.dao.memory_dao import UsersMemoryDAO
 
 from .books import resources as book_resources
 from .users import resources as user_resources
@@ -16,13 +14,23 @@ def create_app(db):
     app.config['PROPAGATE_EXCEPTIONS'] = True
     app.config['JWT_SECRET_KEY'] = 'super-secret'  # TODO: Move this to env var
 
+    # TODO: Move to config
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///../../wookie.sqlite'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+    from .db import db as sqldb
+    sqldb.init_app(app)
+
+    from .books.dao.sql_dao import BooksSQLDAO
+    from .users.dao.sql_dao import UsersSQLDAO
+
     api = Api(app)
     flask_jwt_extended.JWTManager(app)
 
     app_logger = utils.create_logger(__name__)
 
-    books_dao = BooksMemoryDAO(db)
-    users_dao = UsersMemoryDAO(db)
+    books_dao = BooksSQLDAO()
+    users_dao = UsersSQLDAO()
 
     # public Book resources
     api.add_resource(book_resources.PublicBookList,
