@@ -112,7 +112,7 @@ class UserBook(BaseResource):
         """
         current_userid = get_jwt_identity()
         book = self.books_dao.find_book_by_id(book_id)
-        if book['publisher'] != current_userid:
+        if book is None or book['publisher'] != current_userid:
             abort(403)
 
         self.books_dao.delete_book_by_id(book_id)
