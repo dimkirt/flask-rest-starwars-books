@@ -69,6 +69,10 @@ class UserBookList(BaseResource):
     """
     BookList Resource that is owned by a User
     """
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.users_dao = kwargs['users_dao']
+
     @jwt_required
     @marshal_with(get_book_dto, envelope='data')
     def get(self):

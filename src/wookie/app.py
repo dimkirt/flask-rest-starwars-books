@@ -52,7 +52,8 @@ def create_app():
                      '/users/books',
                      resource_class_kwargs={
                          'logger': app_logger,
-                         'books_dao': books_dao
+                         'books_dao': books_dao,
+                         'users_dao': users_dao,
                      })
 
     api.add_resource(book_resources.UserBook,
