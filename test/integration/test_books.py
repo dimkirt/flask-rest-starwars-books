@@ -385,3 +385,49 @@ def test_publish_book_with_existing_title(test_client_with_db):
     assert resp.json['message'] ==\
         'The browser (or proxy) sent a request that this server'\
         ' could not understand.'
+
+
+def test_publish_book_as_darth_vader(test_client_with_db):
+    """
+    POST /users/books
+    The user with the author_pseudonym `_Darth Vader_` is explicitly black
+    listed
+    """
+    # first with authenticate the user
+    url = '/auth'
+    mimetype = 'application/json'
+    headers = {'Content-Type': mimetype, 'Accept': mimetype}
+    data = {'username': 'lord-vader', 'password': 'letmein'}
+    resp = test_client_with_db.post(url,
+                                    data=json.dumps(data),
+                                    headers=headers)
+
+    assert resp.content_type == mimetype
+    assert resp.status_code == 200
+    assert isinstance(resp.json['data'], dict)
+    assert 'access_token' in resp.json['data']
+    access_token = resp.json['data']['access_token']
+
+    # then try post a new book
+    mimetype = 'application/json'
+    headers = {
+        'Content-Type': mimetype,
+        'Accept': mimetype,
+        'Authorization': 'Bearer ' + access_token
+    }
+
+    data = {
+        'title': 'The Wookiee Storybook',
+        'description': 'This is the description',
+        'price': 12.0,
+        'cover': 'image-cover-url-3'
+    }
+    url = '/users/books'
+
+    resp = test_client_with_db.post(url,
+                                    data=json.dumps(data),
+                                    headers=headers)
+    assert resp.status_code == 403
+    assert resp.json['message'] ==\
+        'You don\'t have the permission to access the requested resource. '\
+        'It is either read-protected or not readable by the server.'
