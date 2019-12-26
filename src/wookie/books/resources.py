@@ -1,5 +1,6 @@
 from flask_restful import Resource, fields, marshal_with, request, abort
 from flask_jwt_extended import jwt_required, get_jwt_identity
+import sqlalchemy
 
 
 class BaseResource(Resource):
@@ -101,7 +102,11 @@ class UserBookList(BaseResource):
         book_data['publisher'] = current_userid
         book_data['author'] = publishing_user['author_pseudonym']
 
-        published_book = self.books_dao.create_book(book_data)
+        try:
+            published_book = self.books_dao.create_book(book_data)
+        except sqlalchemy.exc.IntegrityError:
+            abort(400)
+
         published_book['host'] = request.host_url
 
         self.logger.info('POST /users/books')
