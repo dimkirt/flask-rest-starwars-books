@@ -28,3 +28,9 @@ class UsersSQLDAO(abstract_dao.AbstractUsersDAO):
         if user is None:
             return None
         return user.as_dict()
+
+    def find_user_by_id(self, userid):
+        user = User.query.get(userid)
+        if user is None:
+            return None
+        return user.as_dict()

@@ -8,3 +8,7 @@ class AbstractUsersDAO(metaclass=ABCMeta):
     @abstractmethod
     def find_user_in_db(self, username, password):
         raise NotImplementedError
+
+    @abstractmethod
+    def find_user_by_id(self, userid):
+        raise NotImplementedError
