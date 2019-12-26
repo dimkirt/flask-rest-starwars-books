@@ -9,7 +9,7 @@ from .books import resources as book_resources
 from .users import resources as user_resources
 
 
-def create_app(db):
+def create_app():
     app = Flask(__name__)
     app.config['PROPAGATE_EXCEPTIONS'] = True
     app.config['JWT_SECRET_KEY'] = 'super-secret'  # TODO: Move this to env var
