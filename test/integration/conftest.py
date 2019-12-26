@@ -1,5 +1,6 @@
 import pytest  # noqa
 
+from wookie.config import config
 from wookie.db import db as sqldb
 from wookie.books.dao.sql_dao import Book
 from wookie.users.dao.sql_dao import User
@@ -8,7 +9,7 @@ from wookie.app import create_app
 
 @pytest.fixture
 def test_client_with_db():
-    test_app = create_app('testing')
+    test_app = create_app(config=config['testing'])
 
     with test_app.app_context():
         # delete existing db

@@ -4,18 +4,17 @@ from flask_restful import Api
 import flask_jwt_extended
 
 from . import utils
-from .config import config
 
 from .books import resources as book_resources
 from .users import resources as user_resources
 
 
-def create_app(config_name):
+def create_app(config):
     app = Flask(__name__)
     app.config['PROPAGATE_EXCEPTIONS'] = True
-    app.config['JWT_SECRET_KEY'] = config[config_name].JWT_SECRET
+    app.config['JWT_SECRET_KEY'] = config.JWT_SECRET
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = config[config_name].DATABASE_URI
+    app.config['SQLALCHEMY_DATABASE_URI'] = config.DATABASE_URI
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     from .db import db as sqldb
