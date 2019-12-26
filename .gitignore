@@ -93,3 +93,4 @@ db.sqlite3
 .python-version
 .eggs
 *.sqlite
+*.sqlite*
