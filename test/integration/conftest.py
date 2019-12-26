@@ -8,7 +8,7 @@ from wookie.app import create_app
 
 @pytest.fixture
 def test_client_with_db():
-    test_app = create_app()
+    test_app = create_app('testing')
 
     with test_app.app_context():
         # delete existing db
