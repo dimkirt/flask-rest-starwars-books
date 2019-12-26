@@ -32,3 +32,25 @@ def test_get_all_books(test_client_with_db):
     assert 'publisher' not in resp.json['data'][1]
     assert 'links' in resp.json['data'][1]
     assert resp.json['data'][1]['links']['self'] == 'http://localhost/books/2'
+
+
+def test_get_public_book_by_id(test_client_with_db):
+    """
+    GET /book/:id
+    Get a public book by id
+    """
+    url = '/books/1'
+    resp = test_client_with_db.get(url)
+
+    assert resp.status_code == 200
+    assert isinstance(resp.json['data'], dict)
+    assert resp.json['data']['id'] == '1'
+    assert resp.json['data']['title'] == 'The Wookiee Storybook'
+    assert resp.json['data'][
+        'description'] == 'The Wookiee Storybook description'
+    assert resp.json['data']['author'] == 'CB'
+    assert resp.json['data']['price'] == 30.0
+    assert resp.json['data']['cover'] == 'image-cover-url-1'
+    assert 'publisher' not in resp.json['data']
+    assert 'links' in resp.json['data']
+    assert resp.json['data']['links']['self'] == 'http://localhost/books/1'
