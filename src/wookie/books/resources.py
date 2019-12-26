@@ -71,6 +71,7 @@ class UserBookList(BaseResource):
     BookList Resource that is owned by a User
     """
     def __init__(self, **kwargs):
+        self.author_blacklist = ['_Darth Vader_']
         super().__init__(**kwargs)
         self.users_dao = kwargs['users_dao']
 
@@ -98,6 +99,9 @@ class UserBookList(BaseResource):
         book_data = request.get_json()
         current_userid = get_jwt_identity()
         publishing_user = self.users_dao.find_user_by_id(current_userid)
+
+        if publishing_user['author_pseudonym'] in self.author_blacklist:
+            abort(403)
 
         book_data['publisher'] = current_userid
         book_data['author'] = publishing_user['author_pseudonym']
