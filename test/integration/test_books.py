@@ -284,3 +284,104 @@ def test_unpublish_books_that_does_not_exist(test_client_with_db):
     assert resp.json['message'] ==\
         'You don\'t have the permission to access the requested resource. '\
         'It is either read-protected or not readable by the server.'
+
+
+def test_publish_book(test_client_with_db):
+    """
+    POST /users/books
+    An authenticated user publish a new book
+    """
+    # first with authenticate the user
+    url = '/auth'
+    mimetype = 'application/json'
+    headers = {'Content-Type': mimetype, 'Accept': mimetype}
+    data = {'username': 'chewbie', 'password': 'Test1234'}
+    resp = test_client_with_db.post(url,
+                                    data=json.dumps(data),
+                                    headers=headers)
+
+    assert resp.content_type == mimetype
+    assert resp.status_code == 200
+    assert isinstance(resp.json['data'], dict)
+    assert 'access_token' in resp.json['data']
+    access_token = resp.json['data']['access_token']
+
+    # then try post a new book
+    mimetype = 'application/json'
+    headers = {
+        'Content-Type': mimetype,
+        'Accept': mimetype,
+        'Authorization': 'Bearer ' + access_token
+    }
+
+    data = {
+        'title':
+        'How to Speak Wookiee: A Manual for Intergalactic Communication',
+        'description': 'This is the description',
+        'price': 12.0,
+        'cover': 'image-cover-url-3'
+    }
+    url = '/users/books'
+
+    resp = test_client_with_db.post(url,
+                                    data=json.dumps(data),
+                                    headers=headers)
+
+    assert resp.status_code == 201
+    assert isinstance(resp.json['data'], dict)
+    assert resp.json['data']['id'] == '3'
+    assert resp.json['data']['title'] == \
+        'How to Speak Wookiee: A Manual for Intergalactic Communication'
+    assert resp.json['data']['description'] == 'This is the description'
+    assert resp.json['data']['author'] == 'CB'
+    assert resp.json['data']['price'] == 12.0
+    assert resp.json['data']['cover'] == 'image-cover-url-3'
+    assert 'publisher' not in resp.json['data']
+    assert 'links' in resp.json['data']
+    assert resp.json['data']['links']['self'] == 'http://localhost/books/3'
+
+
+def test_publish_book_with_existing_title(test_client_with_db):
+    """
+    POST /users/books
+    An authenticated user tries to publish a new book but with an
+    existing title
+    """
+    # first with authenticate the user
+    url = '/auth'
+    mimetype = 'application/json'
+    headers = {'Content-Type': mimetype, 'Accept': mimetype}
+    data = {'username': 'chewbie', 'password': 'Test1234'}
+    resp = test_client_with_db.post(url,
+                                    data=json.dumps(data),
+                                    headers=headers)
+
+    assert resp.content_type == mimetype
+    assert resp.status_code == 200
+    assert isinstance(resp.json['data'], dict)
+    assert 'access_token' in resp.json['data']
+    access_token = resp.json['data']['access_token']
+
+    # then try post a new book
+    mimetype = 'application/json'
+    headers = {
+        'Content-Type': mimetype,
+        'Accept': mimetype,
+        'Authorization': 'Bearer ' + access_token
+    }
+
+    data = {
+        'title': 'The Wookiee Storybook',
+        'description': 'This is the description',
+        'price': 12.0,
+        'cover': 'image-cover-url-3'
+    }
+    url = '/users/books'
+
+    resp = test_client_with_db.post(url,
+                                    data=json.dumps(data),
+                                    headers=headers)
+    assert resp.status_code == 400
+    assert resp.json['message'] ==\
+        'The browser (or proxy) sent a request that this server'\
+        ' could not understand.'
