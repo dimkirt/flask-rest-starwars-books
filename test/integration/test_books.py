@@ -173,3 +173,114 @@ def test_get_all_user_books_for_a_user_without_books(test_client_with_db):
     assert resp.status_code == 200
     assert isinstance(resp.json['data'], list)
     assert len(resp.json['data']) == 0
+
+
+def test_unpublish_book_user_owns(test_client_with_db):
+    """
+    DELETE /users/books/:id
+    Unpublish a book that belongs to the authenticated user
+    """
+    # first with authenticate the user
+    url = '/auth'
+    mimetype = 'application/json'
+    headers = {'Content-Type': mimetype, 'Accept': mimetype}
+    data = {'username': 'chewbie', 'password': 'Test1234'}
+    resp = test_client_with_db.post(url,
+                                    data=json.dumps(data),
+                                    headers=headers)
+
+    assert resp.content_type == mimetype
+    assert resp.status_code == 200
+    assert isinstance(resp.json['data'], dict)
+    assert 'access_token' in resp.json['data']
+    access_token = resp.json['data']['access_token']
+
+    # then delete a book this user owns
+    headers = {'Authorization': 'Bearer ' + access_token}
+    url = '/users/books/1'
+
+    resp = test_client_with_db.delete(url, headers=headers)
+
+    assert resp.status_code == 204
+    # finally get the books the authenticated user owns
+    headers = {'Authorization': 'Bearer ' + access_token}
+    url = '/users/books'
+
+    resp = test_client_with_db.get(url, headers=headers)
+
+    assert resp.status_code == 200
+    assert isinstance(resp.json['data'], list)
+    assert len(resp.json['data']) == 1
+
+    assert resp.json['data'][0]['id'] == '2'
+    assert resp.json['data'][0][
+        'title'] == 'Wookiee Cookies: A Star Wars Cookbook'
+    assert resp.json['data'][0]['author'] == 'CB'
+    assert resp.json['data'][0]['price'] == 25.0
+    assert resp.json['data'][0]['cover'] == 'image-cover-url-2'
+    assert 'publisher' not in resp.json['data'][0]
+    assert 'links' in resp.json['data'][0]
+    assert resp.json['data'][0]['links']['self'] == 'http://localhost/books/2'
+
+
+def test_unpublish_book_user_does_not_own(test_client_with_db):
+    """
+    DELETE /users/books/:id
+    Try to unpublish a book that does not belong to the authenticated user
+    """
+    # first with authenticate the user
+    url = '/auth'
+    mimetype = 'application/json'
+    headers = {'Content-Type': mimetype, 'Accept': mimetype}
+    data = {'username': 'obi-wan', 'password': 'Test1234'}
+    resp = test_client_with_db.post(url,
+                                    data=json.dumps(data),
+                                    headers=headers)
+
+    assert resp.content_type == mimetype
+    assert resp.status_code == 200
+    assert isinstance(resp.json['data'], dict)
+    assert 'access_token' in resp.json['data']
+    access_token = resp.json['data']['access_token']
+
+    # then try delete a book that does not belong to the user
+    headers = {'Authorization': 'Bearer ' + access_token}
+    url = '/users/books/2'
+
+    resp = test_client_with_db.delete(url, headers=headers)
+    assert resp.status_code == 403
+    assert resp.json['message'] ==\
+        'You don\'t have the permission to access the requested resource. '\
+        'It is either read-protected or not readable by the server.'
+
+
+def test_unpublish_books_that_does_not_exist(test_client_with_db):
+    """
+    DELETE /users/books/:id
+    Try to unpublish a book that does not exist
+    """
+    # first with authenticate the user
+    url = '/auth'
+    mimetype = 'application/json'
+    headers = {'Content-Type': mimetype, 'Accept': mimetype}
+    data = {'username': 'chewbie', 'password': 'Test1234'}
+    resp = test_client_with_db.post(url,
+                                    data=json.dumps(data),
+                                    headers=headers)
+
+    assert resp.content_type == mimetype
+    assert resp.status_code == 200
+    assert isinstance(resp.json['data'], dict)
+    assert 'access_token' in resp.json['data']
+    access_token = resp.json['data']['access_token']
+
+    # then try delete a book that does not exist
+    headers = {'Authorization': 'Bearer ' + access_token}
+    url = '/users/books/3'
+
+    resp = test_client_with_db.delete(url, headers=headers)
+
+    assert resp.status_code == 403
+    assert resp.json['message'] ==\
+        'You don\'t have the permission to access the requested resource. '\
+        'It is either read-protected or not readable by the server.'
