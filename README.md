@@ -1,3 +1,88 @@
+## Setup
+
+Use [pyenv](https://github.com/pyenv/pyenv) to manage python versions and keep your working environment clean.
+
+```bash
+pyenv install 3.7.3
+pyenv local 3.7.3
+```
+
+## Package Management
+
+For package management we will use [pipenv](https://github.com/pypa/pipenv)
+
+```bash
+pip install pipenv
+```
+
+## Installation
+
+```bash
+pipenv install --dev
+```
+
+## Run Tests
+
+Running the tests will create a test database and populate it with some test data.
+
+```bash
+pipenv run pytest
+```
+
+## Environmental Variables
+
+These are the environmental variables we use, you can keep the defaults for testing
+
+```bash
+JWT_SECRET # defaults to: default-super-secret
+DATABASE_URI # defaults to: sqlite:///../../wookie.sqlite.prod
+```
+
+## Setup local DB
+
+To initialize migrations:
+
+```bash
+pipenv run python manage.py db init
+pipenv run python manage.py db migrate
+```
+
+Note: The project already includes a migrations folder so you can skip the above commands.
+
+To upgrade your local db in order to follow the migrations:
+
+```bash
+pipenv run python manage.py db upgrade
+```
+
+## Running the App
+
+```bash
+pipenv run gunicorn --workers 1 --bind 0.0.0.0:8000 wookie.wsgi:prod_app
+```
+
+## Running the App against test DB
+
+In case you want to run the production app against the test database, in `wookie.wsgi.py` change this line:
+
+```python
+prod_app = app.create_app(config=config['production'])
+```
+
+to:
+
+```python
+prod_app = app.create_app(config=config['testing'])
+```
+
+```bash
+pipenv run gunicorn --workers 1 --bind 0.0.0.0:8000 wookie.wsgi:prod_app
+```
+
+## API docs
+
+To document the API we use a published [Postman collection](https://documenter.getpostman.com/view/763923/SWLZgW7C?version=latest)
+
 ## Flask - Wookie Books
 
 ### Description
@@ -39,9 +124,3 @@ going into production - then push your changes to the master branch. After you h
 All the best and happy coding,
 
 The CodeSubmit Team
-
-## Running the App
-
-```bash
-pipenv run gunicorn --workers 1 --bind 0.0.0.0:8000 wookie.wsgi:prod_app
-```
