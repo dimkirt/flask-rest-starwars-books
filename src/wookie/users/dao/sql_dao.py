@@ -25,4 +25,6 @@ class UsersSQLDAO(abstract_dao.AbstractUsersDAO):
     def find_user_in_db(self, username, password):
         user = User.query.filter_by(username=username,
                                     password=password).first()
+        if user is None:
+            return None
         return user.as_dict()
