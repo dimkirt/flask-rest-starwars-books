@@ -9,7 +9,7 @@ class UsersMemoryDAO(abstract_dao.AbstractUsersDAO):
         """
         self._db = db
 
-    def find_user_in_db(self, username, password):
+    def find_user_by_credentials(self, username, password):
         """
         Given a username and password find the User in db
         """

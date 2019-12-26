@@ -22,7 +22,7 @@ class UsersSQLDAO(abstract_dao.AbstractUsersDAO):
     """
     Implements the in sql data access object for the Books
     """
-    def find_user_in_db(self, username, password):
+    def find_user_by_credentials(self, username, password):
         user = User.query.filter_by(username=username,
                                     password=password).first()
         if user is None:

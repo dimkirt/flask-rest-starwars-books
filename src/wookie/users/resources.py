@@ -24,8 +24,8 @@ class UserAuthentication(BaseResource):
         auth_data = request.get_json()
         if 'username' not in auth_data or 'password' not in auth_data:
             abort(400)
-        user = self.users_dao.find_user_in_db(auth_data['username'],
-                                              auth_data['password'])
+        user = self.users_dao.find_user_by_credentials(auth_data['username'],
+                                                       auth_data['password'])
         if not user:
             abort(403)
         access_token = create_access_token(identity=user['id'])
