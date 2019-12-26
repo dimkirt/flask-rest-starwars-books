@@ -96,7 +96,10 @@ class UserBookList(BaseResource):
         """
         book_data = request.get_json()
         current_userid = get_jwt_identity()
+        publishing_user = self.users_dao.find_user_by_id(current_userid)
+
         book_data['publisher'] = current_userid
+        book_data['author'] = publishing_user['author_pseudonym']
 
         published_book = self.books_dao.create_book(book_data)
         published_book['host'] = request.host_url
